@@ -2,6 +2,8 @@ package src;
 import haxe.Json;
 import lime.utils.Log;
 import openfl.display.BitmapData;
+import lime.math.Rectangle;
+
 
 /**
  * Genetic Cave
@@ -10,16 +12,17 @@ import openfl.display.BitmapData;
 class Cave 
 {
 	private var _map:Array<Array<Int>>;
-	public function new(w:Int, h:Int) 
+	public var roomAttempts:Int = 500;
+
+	public function new(w:Int, h:Int, rooms:Bool = false) 
 	{
-		_map = new Array<Array<Int>>();
-		for (i in 0...w) 
+		if (rooms)
 		{
-			_map[i] = new Array<Int>();
-			for (j in 0...h) 
-			{
-				_map[i][j] = Math.round(Math.random()-0.05);
-			}
+			makeRooms(w,h);
+		}
+		else 
+		{
+			makeRandom(w,h);
 		}
 	}
 	
@@ -239,4 +242,114 @@ class Cave
 		return retval;
 	}
 	
+	private function makeRandom(w:Int, h:Int)
+	{
+		_map = new Array<Array<Int>>();
+		for (i in 0...w) 
+		{
+			_map[i] = new Array<Int>();
+			for (j in 0...h) 
+			{
+				_map[i][j] = Math.round(Math.random()-0.05);
+			}
+		}
+	}
+
+	private function makeRooms(w:Int, h:Int) {
+
+		var minRoomWidth:Int = 5;
+		var minRoomHeight:Int = 5;
+		var maxRoomWidth:Int = Std.int(w / 4);
+		var maxRoomHeight:Int = Std.int(h / 4);
+
+		_map = new Array<Array<Int>>();
+		for (i in 0...w) {
+			_map[i] = new Array<Int>();
+			for (j in 0...h) {
+				_map[i][j] = 1; // all walls to begin with
+				// _map[i][j] = Math.round(Math.random()-0.05);
+			}
+		}
+
+		// while (!makeRoom(1+Std.int(Math.random()*w/2),1+Std.int(Math.random()*h/2),2+Std.int(Math.random()*w/2),2+Std.int(Math.random()*h/2))){} //good ol' empty while
+
+		var rooms = new Array<Rectangle>();
+
+		for (i in 0...roomAttempts) {
+			var rX:Int = Std.int(Math.random() * w);
+			var rY:Int = Std.int(Math.random() * h);
+			var rW:Int = minRoomWidth + Std.int(Math.random() * Math.min(w - rX,maxRoomWidth - minRoomWidth)); //I have to check here or otherwise I highly unbalance the rooms that get the max size.
+			var rH:Int = minRoomHeight + Std.int(Math.random() * Math.min(h - rY,maxRoomHeight - minRoomHeight));
+			//Lets see = The minimun + from zero to almost 1 * The lesser value from "The amounts of cell left" vs the biggest room possible minus the smallest.
+			//I substract the smallest room from the biggest because we always add the biggest room possible at the beginning.
+
+
+			if (makeRoom(rX, rY, rW, rH)) {
+				rooms.push(new Rectangle(rX,rY,rW,rH));
+			}
+		}
+
+		for (i in 0...rooms.length-1) 
+		{
+			var toIntersect = rooms[i+1];
+			var actual = rooms[i];
+
+			//code stolen from Rectangle.intersection.
+			var x0 = actual.x < toIntersect.x ? toIntersect.x : actual.x;
+			var w0 = actual.x < toIntersect.x ? toIntersect.width : actual.width;
+			var x1 = actual.right > toIntersect.right ? toIntersect.right : actual.right;
+			var w1 = actual.right > toIntersect.right ? toIntersect.width : actual.width;
+			var y0 = actual.y < toIntersect.y ? toIntersect.y : actual.y;
+			var h0 = actual.y < toIntersect.y ? toIntersect.height : actual.height;
+			var y1 = actual.bottom > toIntersect.bottom ? toIntersect.bottom : actual.bottom;
+			var h1 = actual.bottom > toIntersect.bottom ? toIntersect.height : actual.height;
+
+			if (x1 > x0) {
+				
+				var tX = Std.int(x0 + Math.random() * (x1 - x0-1));
+				var tY = Std.int(y1);
+				var tW = 2;
+				var tH = Std.int(y0 - y1);
+				makeRoom(tX,tY,tW,tH,true);
+				//aligned vertically
+				continue;
+
+			}
+
+			if (y1 > y0) {
+
+				var tX = Std.int(x1);
+				var tY = Std.int(y0 + Math.random() * (y1 - y0-1));
+				var tW = Std.int(x0 - x1);
+				var tH = 2;
+				makeRoom(tX,tY,tW,tH,true);
+				//aligned horizontally.
+				continue;
+			}
+
+			//Couldn't figure out how to make elbows.
+			//Any unconnected room shall be destroyed by the "clean" method.
+
+		}
+	}
+
+	private function makeRoom(x:Int, y:Int, w:Int, h:Int,force:Bool = false):Bool {
+		for (i in x - 1...x + w + 1) {
+			if (_map[i] == null)
+				return false;
+			for (j in y - 1...y + h + 1) {
+				if (_map[i][j] == null || (_map[i][j] == 0 && !force))
+					return false;
+			}
+		}
+		// if we get to here, we can add the room.
+		for (i in x...x + w) {
+			for (j in y...y + h) {
+				_map[i][j] = 0;
+			}
+		}
+		return true;
+	}
+
+
 }

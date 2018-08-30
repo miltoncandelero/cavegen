@@ -1,20 +1,11 @@
 package;
 
-import haxe.Constraints.Function;
-import haxe.io.BytesOutput;
+
 import lime.ui.FileDialog;
-import lime.utils.Log;
-import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.PNGEncoderOptions;
 import openfl.display.Sprite;
-import openfl.events.MouseEvent;
-import openfl.text.TextField;
-import openfl.text.TextFieldType;
-import openfl.text.TextFormat;
-import openfl.text.TextFormatAlign;
 import openfl.utils.ByteArray;
-import src.Cave;
 
 
 /**

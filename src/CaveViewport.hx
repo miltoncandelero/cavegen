@@ -1,7 +1,6 @@
 package;
 
 import flash.display.BitmapData;
-import js.html.VisibilityState;
 import lime.utils.Log;
 import openfl.display.Bitmap;
 import openfl.display.Sprite;
@@ -34,11 +33,11 @@ class CaveViewport extends Sprite
 		
 	}
 	
-	public function generate(w:Int= 100,h:Int = 70 ,smooth:Int = 3,?gridV:Bool)
+	public function generate(w:Int= 100,h:Int = 70 ,smooth:Int = 3,?gridV:Bool, roomBased:Bool = true)
 	{
 		if (gridV != null) gridVisible(gridV);
 		
-		m = new Cave(w, h);
+		m = new Cave(w, h,roomBased);
 		m.smooth(smooth);
 		try 
 		{

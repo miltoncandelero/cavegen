@@ -18,8 +18,9 @@ class UI extends Sprite
 	var txtH:TextField;
 	var txtS:TextField;
 	var showGrid:CheckBox;
+	var roomBased:CheckBox;
 
-	public var generator:Function;//(Int, Int, Int, Bool);
+	public var generator:Function;//(Int, Int, Int, Bool, Bool);
 	public var changeGridVisibility:Function;// (Bool);
 	public var saveOriginal:Function;
 	public var saveCanvas:Function;
@@ -57,7 +58,7 @@ class UI extends Sprite
 		txtWInfo.text = "Width";
 		txtWInfo.defaultTextFormat = new TextFormat("Consolas", 12, 0xFFFFFF, false, false, false, null, null, TextFormatAlign.CENTER);
 		txtWInfo.x = 5;
-		txtWInfo.y = 35;
+		txtWInfo.y = 32;
 		txtWInfo.width = 126;
 		txtWInfo.selectable = false;
 		addChild(txtWInfo);
@@ -67,7 +68,7 @@ class UI extends Sprite
 		txtHInfo.text = "Height";
 		txtHInfo.defaultTextFormat = new TextFormat("Consolas", 12, 0xFFFFFF, false, false, false, null, null, TextFormatAlign.CENTER);
 		txtHInfo.x = 5;
-		txtHInfo.y = 80;
+		txtHInfo.y = 76;
 		txtHInfo.width = 126;
 		txtHInfo.selectable = false;
 		addChild(txtHInfo);
@@ -77,17 +78,27 @@ class UI extends Sprite
 		txtSInfo.text = "Smoothness";
 		txtSInfo.defaultTextFormat = new TextFormat("Consolas", 12, 0xFFFFFF, false, false, false, null, null, TextFormatAlign.CENTER);
 		txtSInfo.x = 5;
-		txtSInfo.y = 125;
+		txtSInfo.y = 121;
 		txtSInfo.width = 126;
 		txtSInfo.selectable = false;
 		addChild(txtSInfo);
+
+		var txtRInfo:TextField = new TextField();
+		txtRInfo.type = TextFieldType.DYNAMIC;
+		txtRInfo.text = "Room based?";
+		txtRInfo.defaultTextFormat = new TextFormat("Consolas", 12, 0xFFFFFF, false, false, false, null, null, TextFormatAlign.CENTER);
+		txtRInfo.x = 5;
+		txtRInfo.y = 162;
+		txtRInfo.width = 126;
+		txtRInfo.selectable = false;
+		addChild(txtRInfo);
 		
 		var txtGInfo:TextField = new TextField();
 		txtGInfo.type = TextFieldType.DYNAMIC;
 		txtGInfo.text = "Show grid";
 		txtGInfo.defaultTextFormat = new TextFormat("Consolas", 12, 0xFFFFFF, false, false, false, null, null, TextFormatAlign.CENTER);
 		txtGInfo.x = 5;
-		txtGInfo.y = 168;
+		txtGInfo.y = 233;
 		txtGInfo.width = 126;
 		txtGInfo.selectable = false;
 		addChild(txtGInfo);
@@ -97,7 +108,7 @@ class UI extends Sprite
 		txtSaveInfo.text = "Save";
 		txtSaveInfo.defaultTextFormat = new TextFormat("Consolas", 16, 0xFFFFFF, false, false, false, null, null, TextFormatAlign.CENTER);
 		txtSaveInfo.x = 5;
-		txtSaveInfo.y = 260;
+		txtSaveInfo.y = 270;
 		txtSaveInfo.width = 126;
 		txtSaveInfo.selectable = false;
 		addChild(txtSaveInfo);
@@ -112,7 +123,7 @@ class UI extends Sprite
 		txtW.width = 50;
 		txtW.height = 22;
 		txtW.x = (126 - 50) / 2 + 5;
-		txtW.y = 50;
+		txtW.y = 47;
 		txtW.text = "100";
 		addChild(txtW);
 		
@@ -126,7 +137,7 @@ class UI extends Sprite
 		txtH.width = 50;
 		txtH.height = 22;
 		txtH.x = (126 - 50) / 2 + 5;
-		txtH.y = 95;
+		txtH.y = 91;
 		txtH.text = "70";
 		addChild(txtH);
 		
@@ -140,15 +151,21 @@ class UI extends Sprite
 		txtS.width = 50;
 		txtS.height = 22;
 		txtS.x = (126 - 50) / 2 + 5;
-		txtS.y = 140;
+		txtS.y = 136;
 		txtS.text = "3";
 		addChild(txtS);
 		
-		showGrid = new CheckBox(checkboxCallback);
+		showGrid = new CheckBox(checkboxGridCallback);
 		showGrid.x = (126 - 20) / 2 + 5;
-		showGrid.y = 185;
+		showGrid.y = 250;
 		showGrid.value = true;
 		addChild(showGrid);
+
+		roomBased = new CheckBox();
+		roomBased.x = (126 - 20) / 2 + 5;
+		roomBased.y = 180;
+		roomBased.value = true;
+		addChild(roomBased);
 		
 		var btnGenerate:TextField = new TextField();
 		btnGenerate.border = true;
@@ -157,7 +174,7 @@ class UI extends Sprite
 		btnGenerate.text = "GENERATE";
 		btnGenerate.defaultTextFormat = new TextFormat("Consolas", 16, 0xFFFFFF, false, false, false, null, null, TextFormatAlign.CENTER);
 		btnGenerate.x = 10;
-		btnGenerate.y = 220;
+		btnGenerate.y = 205;
 		btnGenerate.width = 116;
 		btnGenerate.height = 22;
 		btnGenerate.selectable = false;
@@ -171,7 +188,7 @@ class UI extends Sprite
 		btnSaveCanvas.text = "PNG preview";
 		btnSaveCanvas.defaultTextFormat = new TextFormat("Consolas", 12, 0xFFFFFF, false, false, false, null, null, TextFormatAlign.CENTER);
 		btnSaveCanvas.x = 10;
-		btnSaveCanvas.y = 280;
+		btnSaveCanvas.y = 290;
 		btnSaveCanvas.width = 116;
 		btnSaveCanvas.height = 18;
 		btnSaveCanvas.selectable = false;
@@ -185,7 +202,7 @@ class UI extends Sprite
 		btnSaveOriginal.text = "PNG original";
 		btnSaveOriginal.defaultTextFormat = new TextFormat("Consolas", 12, 0xFFFFFF, false, false, false, null, null, TextFormatAlign.CENTER);
 		btnSaveOriginal.x = 10;
-		btnSaveOriginal.y = 300;
+		btnSaveOriginal.y = 310;
 		btnSaveOriginal.width = 116;
 		btnSaveOriginal.height = 18;
 		btnSaveOriginal.selectable = false;
@@ -199,7 +216,7 @@ class UI extends Sprite
 		btnSaveJSON.text = "JSON data";
 		btnSaveJSON.defaultTextFormat = new TextFormat("Consolas", 12, 0xFFFFFF, false, false, false, null, null, TextFormatAlign.CENTER);
 		btnSaveJSON.x = 10;
-		btnSaveJSON.y = 320;
+		btnSaveJSON.y = 330;
 		btnSaveJSON.width = 116;
 		btnSaveJSON.height = 18;
 		btnSaveJSON.selectable = false;
@@ -225,9 +242,9 @@ class UI extends Sprite
 	
 	function generate(e:MouseEvent):Void 
 	{
-		generator(Std.parseInt(txtW.text), Std.parseInt(txtH.text), Std.parseInt(txtS.text), showGrid.value);
+		generator(Std.parseInt(txtW.text), Std.parseInt(txtH.text), Std.parseInt(txtS.text), showGrid.value, roomBased.value);
 	}
-	function checkboxCallback(b:Bool)
+	function checkboxGridCallback(b:Bool)
 	{
 		changeGridVisibility(b);
 	}
